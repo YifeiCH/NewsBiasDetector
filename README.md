@@ -1,135 +1,165 @@
-# Political Bias Detection in News Articles
+# PoliticalNewsDetector
 
-**Authors**:  
-- Yifei Chen  
-- Bazil Akram  
-- Andrew Abdelshahed
+Detect political bias (Democratic vs. Republican) from news articles using machine learning.
 
-## Overview
-
-This project aims to detect the political bias (Democratic vs. Republican) in news articles. We compare **Naive Bayes** and **Logistic Regression** to determine which classifier performs better on our dataset. The code is written in Python using popular libraries such as `pandas`, `scikit-learn`, and `nltk`.
-
-## Getting Started
-
-### Prerequisites
-
-1. **Python 3.10+** (or higher)
-2. **Pip** or **Conda** for package management
-
-### Installation
-
-1. **Clone the Repository**  
-   ```bash
-   git clone https://github.com/your_username/PoliticalBiasNews.git
-   cd PoliticalBiasNews
-   ```
-
-2. **Create and Activate a Virtual Environment (Recommended)**  
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On macOS/Linux
-   # or
-   venv\Scripts\activate     # On Windows
-   ```
-
-3. **Install Requirements**  
-   ```bash
-   pip install -r requirements.txt
-   ```
-   > If `requirements.txt` is missing, you can manually install packages such as:
-   > ```bash
-   > pip install numpy pandas scikit-learn nltk
-   > ```
-
-4. **Download NLTK Stopwords** (if not already installed)  
-   ```python
-   import nltk
-   nltk.download('stopwords')
-   ```
-
-### Dataset
-
-- We use a public dataset of news articles labeled with political bias (Democratic vs. Republican).  
-- You can place the dataset file (e.g., `your_news_dataset.csv`) under `data/` or wherever makes sense in your folder structure.
-
-## Usage
-
-1. **Run Preprocessing & Feature Extraction**  
-   - Inside `src/preprocess.py` (example), a script cleans and transforms text into TF-IDF vectors (or Bag-of-Words).  
-
-2. **Train the Models**  
-   - **Naive Bayes** and **Logistic Regression** are both trained on the same train set.  
-   - For instance, `python src/train.py` might:
-     1. Load the dataset.  
-     2. Preprocess text.  
-     3. Split into train/test sets.  
-     4. Fit both classifiers.  
-     5. Print accuracy, classification report, confusion matrix, etc.
-
-3. **Evaluate and Compare**  
-   - Check the printed metrics or generated results (e.g., a CSV of predictions, console output, or a visualization).  
-   - Decide which model is better based on metrics like accuracy, precision, recall, or F1 score.
-
-### Example Command (if you have a single script):
-```bash
-cd src
-python train.py
-```
-This will:
-- Read `data/your_news_dataset.csv`  
-- Preprocess text  
-- Split train/test data  
-- Train both Naive Bayes & Logistic Regression  
-- Print evaluation metrics  
-
-## Results
-
-- Example metrics printed by the code:
-
-  ```
-  Naive Bayes Accuracy: 0.85
-  Classification Report (Naive Bayes):
-                precision    recall  f1-score   support
-    ...
-  
-  Logistic Regression Accuracy: 0.87
-  Classification Report (Logistic Regression):
-                precision    recall  f1-score   support
-    ...
-  ```
-
-- A **confusion matrix** will show how often each class (Democratic or Republican) was correctly identified.
-
-## Future Enhancements
-
-1. **Hyperparameter Tuning**: Use `GridSearchCV` or `RandomizedSearchCV` to optimize `alpha` in Naive Bayes or `C` in Logistic Regression.  
-2. **Advanced NLP**: Experiment with word embeddings (GloVe, FastText) or transformer-based models (BERT).  
-3. **More Classes**: Expand beyond a simple Democrat/Republican bias to other parties or to detect more nuanced biases.  
-4. **Deployment**: Expose the model via a simple web API (Flask, FastAPI, etc.) to classify new, incoming articles in real-time.
-
-## Contributing
-
-1. **Fork** this repository  
-2. Create a **new branch** for your changes  
-3. **Commit** your changes  
-4. Submit a **Pull Request**  
-
-We welcome improvements, bug reports, and new feature suggestions!
-
-## License
-
-You can include a license of your choice (e.g., MIT, Apache 2.0). If unsure, the MIT license is a popular, permissive option.
+## Table of Contents
+1. [Overview](#overview)
+2. [Dataset](#dataset)
+3. [Algorithms Used](#algorithms-used)
+4. [Project Structure](#project-structure)
+5. [Installation & Setup](#installation--setup)
+6. [Usage](#usage)
+7. [Contributing](#contributing)
+8. [License](#license)
+9. [Contact](#contact)
 
 ---
 
-**Contact**:  
-- If you have any questions, feel free to reach out via GitHub Issues or directly to any of the project contributors.  
-- **Yifei Chen** – [email/contact info if desired]  
-- **Bazil Akram** – [email/contact info if desired]  
-- **Andrew Abdelshahed** – [email/contact info if desired]
+## Overview
+This project classifies news articles based on political bias—Democratic or Republican—using two machine learning algorithms. We compare their performance to determine which model is more effective at detecting bias.
 
-Happy Coding!  
+### Team Members
+- **Yifei Chen**  
+- **Bazil Akram**  
+- **Andrew Abdelshahed**  
 
----  
+### Goals
+- Use **Logistic Regression** and **Naive Bayes** to classify articles as Democratic or Republican.  
+- Train and evaluate these models on a public political bias dataset.  
+- Compare each model’s performance using standard classification metrics.
 
-> _Disclaimer: This project is meant for educational purposes. Real-world detection of political bias can be complex and context-sensitive. Always verify performance and ethical considerations if deploying such systems in production._
+---
+
+## Dataset
+We use a publicly available dataset from **Kaggle**:  
+[News Political Bias Dataset](https://www.kaggle.com/datasets/mayobanexsantana/political-bias)
+
+**Notes**:
+- Place the downloaded files in the `data/raw` folder.
+- Any preprocessed or cleaned data is stored in `data/processed`.
+
+---
+
+## Algorithms Used
+1. **Logistic Regression**  
+   - Effective baseline for text classification.  
+   - Offers interpretability through coefficient analysis.
+
+2. **Naive Bayes**  
+   - Simple, fast, and well-suited for text classification.  
+   - Especially good for bag-of-words or TF-IDF features.
+
+These models will be evaluated on metrics such as:
+- **Accuracy**  
+- **Precision**  
+- **Recall**  
+- **F1-Score**  
+- Confusion matrices for deeper insight
+
+---
+
+## Project Structure
+Below is an overview of the folder layout:
+
+```
+PoliticalNewsDetector/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── notebooks/
+├── src/
+│   ├── __init__.py
+│   ├── preprocessing.py        # Basic text cleaning and data loading
+│   ├── model_logreg.py         # Logistic Regression code
+│   ├── model_naivebayes.py     # Naive Bayes code
+│   └── ...
+├── tests/
+│   └── test_models.py
+├── requirements.txt
+└── README.md
+```
+
+- **data/raw**: Original dataset files  
+- **data/processed**: Cleaned or transformed data  
+- **notebooks**: Jupyter notebooks for exploratory analysis and experimentation  
+- **src**: Core project source code, including preprocessing and modeling scripts  
+- **tests**: Optional directory for unit or integration tests  
+- **requirements.txt**: Python dependencies  
+- **README.md**: Project overview and usage instructions  
+
+---
+
+## Installation & Setup
+
+1. **Clone the Repository**  
+   ```bash
+   git clone <YOUR_REPO_URL>.git
+   cd PoliticalNewsDetector
+   ```
+
+2. **Set Up a Virtual Environment (Recommended)**  
+   ```bash
+   # For example, using Python 3.10:
+   python3.10 -m venv venv
+   source venv/bin/activate   # On macOS/Linux
+   # or
+   venv\Scripts\activate.bat  # On Windows
+   ```
+
+3. **Install Dependencies**  
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+4. **Download Dataset**  
+   - Go to [Kaggle dataset page](https://www.kaggle.com/datasets/mayobanexsantana/political-bias).
+   - Place the downloaded files in `data/raw`.
+
+---
+
+## Usage
+
+1. **Preprocessing**  
+   - Run the text preprocessing script to clean the data:
+     ```bash
+     python src/preprocessing.py
+     ```
+   - This produces a cleaned CSV file in `data/processed/`.
+
+2. **Training and Evaluation**  
+   - Train and evaluate Logistic Regression:
+     ```bash
+     python src/model_logreg.py
+     ```
+   - Train and evaluate Naive Bayes:
+     ```bash
+     python src/model_naivebayes.py
+     ```
+   - Compare accuracy, precision, recall, and F1-scores from both outputs.
+
+3. **Results**  
+   - Metrics can be printed to the console or saved to a file.  
+   - Review confusion matrices, classification reports, or any plots for additional insights.
+
+---
+
+## Contributing
+1. **Branching**: Create a new branch for each feature or bugfix.  
+2. **Pull Requests**: Submit PRs for review before merging into the `main` branch.  
+3. **Code Style**: Follow [PEP 8 guidelines](https://peps.python.org/pep-0008/) or any team-agreed standard.
+
+---
+
+## License
+You may choose a license if you wish to make your project open-source. A common choice is the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+## Contact
+For any questions, reach out to the team members:
+- **Yifei Chen**  
+- **Bazil Akram**  
+- **Andrew Abdelshahed**
+
+---
