@@ -1,6 +1,6 @@
 # PoliticalNewsDetector
 
-Detect political bias (Democratic vs. Republican) from news articles using machine learning.
+Detect political bias (Democratic vs. Republican) in news articles using **scikit-learn pipelines** for text classification.
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -16,7 +16,7 @@ Detect political bias (Democratic vs. Republican) from news articles using machi
 ---
 
 ## Overview
-This project classifies news articles based on political bias—Democratic or Republican—using two machine learning algorithms. We compare their performance to determine which model is more effective at detecting bias.
+This project classifies news articles based on political bias—Democratic or Republican—using two machine learning algorithms: **Logistic Regression** and **Naive Bayes**. We harness **scikit-learn pipelines** to streamline text preprocessing (TF-IDF vectorization) and model training.
 
 ### Team Members
 - **Yifei Chen**  
@@ -24,9 +24,9 @@ This project classifies news articles based on political bias—Democratic or Re
 - **Andrew Abdelshahed**  
 
 ### Goals
-- Use **Logistic Regression** and **Naive Bayes** to classify articles as Democratic or Republican.  
-- Train and evaluate these models on a public political bias dataset.  
-- Compare each model’s performance using standard classification metrics.
+- Compare **Logistic Regression** and **Naive Bayes** on news text data.  
+- Use **scikit-learn pipelines** to simplify data vectorization and model building.  
+- Determine which algorithm performs better at predicting political bias.
 
 ---
 
@@ -34,30 +34,23 @@ This project classifies news articles based on political bias—Democratic or Re
 We use a publicly available dataset from **Kaggle**:  
 [News Political Bias Dataset](https://www.kaggle.com/datasets/mayobanexsantana/political-bias)
 
-**Notes**:
-- Place the downloaded files in the `data/raw` folder.
-- Any preprocessed or cleaned data is stored in `data/processed`.
+1. **Raw Data**: Place the downloaded dataset in `data/raw/Political_Bias.csv`.  
+2. **Preprocessed Data**: A cleaning script (`preprocessing.py`) will read the raw CSV and create a cleaned version in `data/processed/`.
 
 ---
 
 ## Algorithms Used
-1. **Logistic Regression**  
-   - Effective baseline for text classification.  
-   - Offers interpretability through coefficient analysis.
+1. **Logistic Regression** (scikit-learn)  
+2. **Naive Bayes** (scikit-learn, typically MultinomialNB)
 
-2. **Naive Bayes**  
-   - Simple, fast, and well-suited for text classification.  
-   - Especially good for bag-of-words or TF-IDF features.
-
-These models will be evaluated on metrics such as:
-- **Accuracy**  
-- **Precision**  
-- **Recall**  
-- **F1-Score**  
-- Confusion matrices for deeper insight
+### Evaluation Metrics
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Confusion Matrix (optional for deeper insight)
 
 ---
-
 ## Project Structure
 Below is an overview of the folder layout:
 
