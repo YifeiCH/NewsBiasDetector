@@ -1,10 +1,11 @@
 import os
 import pandas as pd
+import joblib  # for saving the model
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, accuracy_score
-from imblearn.over_sampling import RandomOverSampler  # <-- for oversampling
+from sklearn.naive_bayes import MultinomialNB
+from imblearn.over_sampling import RandomOverSampler
 
 def map_bias_to_binary(bias_label):
     """
@@ -27,7 +28,7 @@ def train_and_evaluate_naive_bayes():
     # Drop rows with missing cleaned_text
     df.dropna(subset=['cleaned_text'], inplace=True)
 
-    # Map multi-class => two-class labels
+    # Map multi-class => two-class
     df['Bias_binary'] = df['Bias'].apply(map_bias_to_binary)
 
     # Remove 'Center'
@@ -36,32 +37,36 @@ def train_and_evaluate_naive_bayes():
     X = df['cleaned_text']
     y = df['Bias_binary']
 
-    # 1. Train/test split
+    # 1. Train/Test split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # 2. Convert raw text to TF-IDF features
+    # 2. Vectorize
     tfidf = TfidfVectorizer()
     X_train_vec = tfidf.fit_transform(X_train)
-    X_test_vec = tfidf.transform(X_test)
+    X_test_vec  = tfidf.transform(X_test)
 
-    # 3. Oversample the training set to balance classes
+    # 3. Oversample the minority class
     ros = RandomOverSampler(random_state=42)
     X_train_resampled, y_train_resampled = ros.fit_resample(X_train_vec, y_train)
 
-    # 4. Train Naive Bayes on the oversampled data
-    nb = MultinomialNB()
+    # 4. Use the best alpha found from your trials
+    best_alpha = 0.01
+    nb = MultinomialNB(alpha=best_alpha)
     nb.fit(X_train_resampled, y_train_resampled)
 
-    # 5. Predict on the (non-oversampled) test set
+    # 5. Predict on the test set
     y_pred = nb.predict(X_test_vec)
-
-    # 6. Evaluate
     accuracy = accuracy_score(y_test, y_pred)
-    print("Naive Bayes Accuracy:", accuracy)
+    print(f"Naive Bayes (alpha={best_alpha}) Accuracy:", accuracy)
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
+
+    # 6. Save the vectorizer and final NB model for future use
+    joblib.dump(tfidf, "tfidf_nb.pkl")
+    joblib.dump(nb, "nb_model.pkl")
+    print("\nSaved tfidf_nb.pkl and nb_model.pkl")
 
 if __name__ == "__main__":
     train_and_evaluate_naive_bayes()
