@@ -4,39 +4,103 @@
   <meta charset="UTF-8" />
   <title>Political Bias Detector</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;max-width:700px;margin:40px auto}
-    textarea{width:100%;height:180px}
-    button{padding:10px 20px;margin-top:10px}
-    .result{margin-top:20px}
-    .label{font-weight:bold}
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 180px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+    .result {
+      margin-top: 30px;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .models {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .model-box {
+      flex: 1;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    .model-box h3 {
+      margin-top: 0;
+    }
+    .final-decision {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #333;
+    }
   </style>
 </head>
 <body>
   <h2>Paste news text below → click <em>Detect</em></h2>
   <textarea id="news"></textarea><br />
   <button id="detectBtn">Detect</button>
+
   <div class="result" id="output"></div>
 
-<!-- only the fetch() line changed -->
-<script>
-document.getElementById("detectBtn").onclick = async () => {
+  <script>
+  document.getElementById("detectBtn").onclick = async () => {
     const text = document.getElementById("news").value.trim();
-    if (!text){ alert("Please paste some text."); return; }
+    if (!text) {
+      alert("Please paste some text.");
+      return;
+    }
 
-    const res = await fetch("/predict", {          <!-- changed -->
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ text })
+    const res = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
     });
     const data = await res.json();
+
     document.getElementById("output").innerHTML = `
-      <p>Logistic Regression → <span class="label">${data.logreg.label}</span>
-      (confidence ${data.logreg.conf})</p>
-      <p>Naive Bayes → <span class="label">${data.naive_bayes.label}</span>
-      (confidence ${data.naive_bayes.conf})</p>
-      <hr>
-      <p><b>Final decision:</b> <span class="label">${data.winner}</span></p>`;
-};
-</script>
+      <div class="models">
+        <div class="model-box">
+          <h3>Logistic Regression</h3>
+          <p>Prediction → <span class="label">${data.logreg.label}</span> (confidence ${data.logreg.conf})</p>
+          <ul>
+            <li>Accuracy: ${data.logreg.metrics.accuracy}</li>
+            <li>F1 (Democratic): ${data.logreg.metrics.f1_democratic}</li>
+            <li>F1 (Republican): ${data.logreg.metrics.f1_republican}</li>
+            <li>Macro F1: ${data.logreg.metrics.macro_f1}</li>
+          </ul>
+        </div>
+
+        <div class="model-box">
+          <h3>Naive Bayes</h3>
+          <p>Prediction → <span class="label">${data.naive_bayes.label}</span> (confidence ${data.naive_bayes.conf})</p>
+          <ul>
+            <li>Accuracy: ${data.naive_bayes.metrics.accuracy}</li>
+            <li>F1 (Democratic): ${data.naive_bayes.metrics.f1_democratic}</li>
+            <li>F1 (Republican): ${data.naive_bayes.metrics.f1_republican}</li>
+            <li>Macro F1: ${data.naive_bayes.metrics.macro_f1}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="final-decision">
+        Final decision: <span class="label">${data.winner}</span>
+      </div>
+    `;
+  };
+  </script>
 </body>
 </html>

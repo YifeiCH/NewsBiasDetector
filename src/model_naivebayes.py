@@ -1,9 +1,10 @@
 import os
 import pandas as pd
 import joblib  # for saving the model
+import json
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, f1_score
 from sklearn.naive_bayes import MultinomialNB
 from imblearn.over_sampling import RandomOverSampler
 
@@ -59,6 +60,10 @@ def train_and_evaluate_naive_bayes():
     # 5. Predict on the test set
     y_pred = nb.predict(X_test_vec)
     accuracy = accuracy_score(y_test, y_pred)
+    f1_dem = f1_score(y_test, y_pred, pos_label="Democratic")
+    f1_rep = f1_score(y_test, y_pred, pos_label="Republican")
+    macro_f1 = f1_score(y_test, y_pred, average="macro")
+
     print(f"Naive Bayes (alpha={best_alpha}) Accuracy:", accuracy)
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
@@ -67,6 +72,17 @@ def train_and_evaluate_naive_bayes():
     joblib.dump(tfidf, "tfidf_nb.pkl")
     joblib.dump(nb, "nb_model.pkl")
     print("\nSaved tfidf_nb.pkl and nb_model.pkl")
+
+    # 7. Save evaluation metrics
+    metrics = {
+        "accuracy":      round(accuracy, 4),
+        "f1_democratic": round(f1_dem, 4),
+        "f1_republican": round(f1_rep, 4),
+        "macro_f1":      round(macro_f1, 4)
+    }
+    with open("metrics_naivebayes.json", "w") as f:
+        json.dump(metrics, f)
+    print("Saved metrics_naivebayes.json")
 
 if __name__ == "__main__":
     train_and_evaluate_naive_bayes()
