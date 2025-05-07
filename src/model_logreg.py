@@ -1,11 +1,15 @@
 import os
-import pandas as pd
-import joblib
 import json
+import joblib
+import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, f1_score
+from sklearn.metrics import (
+    accuracy_score, classification_report, f1_score,
+    roc_curve, auc
+)
 from imblearn.over_sampling import RandomOverSampler
 
 def map_bias_to_binary(bias_label):
@@ -72,6 +76,25 @@ def train_and_evaluate_logreg():
     with open("metrics_logreg.json", "w") as f:
         json.dump(metrics, f)
     print("Saved metrics_logreg.json")
+
+    # --------- Generate ROC Curve ---------
+    y_prob = logreg.predict_proba(X_test_vec)[:, 1]  # prob for Republican
+    y_true_bin = (y_test == "Republican").astype(int)
+
+    fpr, tpr, _ = roc_curve(y_true_bin, y_prob)
+    roc_auc = auc(fpr, tpr)
+
+    plt.figure()
+    plt.plot(fpr, tpr, label=f"Logistic Regression (AUC = {roc_auc:.3f})")
+    plt.plot([0, 1], [0, 1], "k--", label="Random Guess")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve — Logistic Regression")
+    plt.legend(loc="lower right")
+    plt.grid(True)
+    plt.savefig("roc_logreg.png")
+    plt.close()
+    print("Saved roc_logreg.png")
 
 if __name__ == "__main__":
     train_and_evaluate_logreg()
